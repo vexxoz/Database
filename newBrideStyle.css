@@ -1,0 +1,51 @@
+#alert{
+	background-color: lightcoral;
+    text-align: center;
+    color: white;
+}
+#search{
+	margin-top: 25px;
+	border-radius: 25px;
+	font-size: 20px;
+}
+#resultsBox{
+	margin-top: 20px;
+}
+#results{
+	text-decoration: none;
+	list-style-type: none;
+}
+/*
+For card style
+*/
+#card{
+	height: 300px;
+    -webkit-transition: background-color 1s;
+    transition: background-color 1s;
+}
+#card:hover{
+	background-color: #f076a3;
+	color: white;
+}
+/*
+For list style
+*/
+#entry{
+	width: 100%;
+	font-size: 17px;
+	height: 40px;
+}
+#entry:hover{
+	background-color: grey;
+}
+/*
+Edit button style
+*/
+#edit{
+	/*border-radius: 25px*/
+    position: absolute;
+    width: 100%;
+    left: 0;
+    margin-top: 263px;
+    font-size: 20px;
+}
