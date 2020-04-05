@@ -138,7 +138,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo $predateTime[0];}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (yyyy-mm-dd)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo $predateTime[0];}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Time</label><br><input id="pretime" name="prestarttime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
               </div>
 
@@ -276,7 +276,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo $predateTime[0];}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (yyyy-mm-dd)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo $predateTime[0];}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>ROTD</label><br><input name="readyontheday" value="<?php if($isedit==0){}else{echo $brideInfo[0]->rotd;}?>"></div>
               </div>
 
@@ -422,7 +422,7 @@ if($isedit == 1){
         <button id="menuButtom" type="submit" name="isedit" value="<?php echo $isedit; ?>">Save</button>
         <button id="menuButtom" type="reset">Undo Changes</Button>
       </form><!-- End form -->
-      <button id="menuButtom" onclick="goBack()">Cancel</button>
+      <button id="menuButtom" onclick="goBack()" style="margin-bottom: 35px;">Cancel</button>
     </div><!-- End container row -->
   </body>
   <script>
