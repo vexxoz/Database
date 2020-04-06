@@ -16,17 +16,18 @@ if((isset($_GET['bid']) && $_GET['bid'] != "" && $_GET['bid'] != NULL && is_nume
   header("Location: newbride-new.php");
 }
 
+// Get general information
+$referredList = json_decode(listReferralSources());
+$plannerList = json_decode(listPlanners());
+$photoList = json_decode(listPhotographers());
+$consList = json_decode(listConsultants(1));
+
 // if editing get existing info from bride
 if($isedit == 1){
-
-  // get assoc array returned from the DB with all the wedding/bride information
+  // get brides personal info if editing
   $brideInfo = json_decode(listBrideInfo($bid, '0'));
   $brideServices = json_decode(listBrideServices($bid, '0'));
   $bridePayments = json_decode(listPayments($bid, '0'));
-  $referredList = json_decode(listReferralSources());
-  $plannerList = json_decode(listPlanners());
-  $photoList = json_decode(listPhotographers());
-  $consList = json_decode(listConsultants(1));
   $brideConsList = json_decode(listDayOfConsultants($bid));
 
   // get contract id
