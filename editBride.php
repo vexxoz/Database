@@ -18,7 +18,8 @@ if((isset($_GET['bid']) && $_GET['bid'] != "" && $_GET['bid'] != NULL && is_nume
 
 // if editing get existing info from bride
 if($isedit == 1){
-  // get assoc array returned from the DB
+
+  // get assoc array returned from the DB with all the wedding/bride information
   $brideInfo = json_decode(listBrideInfo($bid, '0'));
   $brideServices = json_decode(listBrideServices($bid, '0'));
   $bridePayments = json_decode(listPayments($bid, '0'));
@@ -28,10 +29,18 @@ if($isedit == 1){
   $consList = json_decode(listConsultants(1));
   $brideConsList = json_decode(listDayOfConsultants($bid));
 
+  // get contract id
   $contractId = $brideInfo[0]->Contract_ID;
+
+  // get contract date
+  $contractdate = $brideInfo[0]->Contract_Date;
 }else{ // adding a new bride
+  // create a 9 digit number for a contract id
   $contractId = '';
   for($i = 0; $i < 9; $i++) { $contractId .= mt_rand(0, 9); }
+
+  // get the date for the contract date
+  $contractdate = date('Y-m-d');
 }
 
 ?>
@@ -417,6 +426,7 @@ if($isedit == 1){
           </div>
         </div><!-- End second row -->
         <input name="fromValue" value="1" type="hidden">
+        <input name="contractdate" value="<?php echo $contractdate; ?>" type="hidden">
         <input name="brideid" value="<?php echo $bid; ?>" type="hidden">
         <input name="contractid" value="<?php echo $contractId; ?>" type="hidden">
         <button id="menuButtom" type="submit" name="isedit" value="<?php echo $isedit; ?>">Save</button>
