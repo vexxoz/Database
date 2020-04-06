@@ -160,7 +160,7 @@ if($isedit == 1){
                     <?php
                     $referredHTML = "";
                     foreach ($referredList as $ref) {
-                      if(($isedit == 1) && ($ref->ID == $brideInfo[0]->Client_ReferredBy)){
+                      if( (($isedit == 1) && ($ref->ID == $brideInfo[0]->Client_ReferredBy)) || (($isedit == 0) && ($ref->ID == 1)) ){
                         $referredHTML = $referredHTML . "<option selected value='".$ref->ID."'>".$ref->Name."</option>";
                       }else{
                         $referredHTML = $referredHTML . "<option value='".$ref->ID."'>".$ref->Name."</option>";
@@ -307,7 +307,7 @@ if($isedit == 1){
                     <?php
                     $plannerHTML = "";
                     foreach ($plannerList as $plannerItem) {
-                      if(($isedit == 1) && ($plannerItem->ID == $brideInfo[0]->Client_Planner_ID)){
+                      if((($isedit == 1) && ($plannerItem->ID == $brideInfo[0]->Client_Planner_ID)) || (($isedit == 0) && ($plannerItem->ID == 1)) ){
                         $plannerHTML = $plannerHTML . "<option selected value='".$plannerItem->ID."'>".$plannerItem->Name."</option>";
                       }else{
                         $plannerHTML = $plannerHTML . "<option value='".$plannerItem->ID."'>".$plannerItem->Name."</option>";
@@ -328,7 +328,7 @@ if($isedit == 1){
                     <?php
                     $photoHTML = "";
                     foreach ($photoList as $photoItem) {
-                      if(($isedit == 1) && ($photoItem->ID == $brideInfo[0]->Client_Photographer_ID)){
+                      if( (($isedit == 1) && ($photoItem->ID == $brideInfo[0]->Client_Photographer_ID)) || (($isedit == 0) && ($photoItem->ID == 1)) ){
                         $photoHTML = $photoHTML . "<option selected value='".$photoItem->ID."'>".$photoItem->Name."</option>";
                       }else{
                         $photoHTML = $photoHTML . "<option value='".$photoItem->ID."'>".$photoItem->Name."</option>";
