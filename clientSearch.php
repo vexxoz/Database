@@ -89,7 +89,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 
 				// get total cost of services
 				$totalCost = 0;
-				$total_cost_sql = "SELECT services.Service_Price FROM services WHERE Client_ID='$bid'";
+				$total_cost_sql = "SELECT services.Service_Price, services.IsCancelled FROM services WHERE Client_ID='$bid'";
 				$total_cost_sql_return = $mainConnection->query($total_cost_sql) or die("cannot get info on total cost.");
 				while($total_cost_row = $total_cost_sql_return->fetch_assoc()){
 					if($total_cost_row['IsCancelled'] == 1){
