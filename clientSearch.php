@@ -9,31 +9,7 @@ if ((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 
 	require_once "dbfunctions.php";
 	$mainConnection = dbConnect();
 
-	// make sure the type is set and is set to edit and there is a valid id being send
-	if(isset($_POST['type']) && $_POST['type'] == 'edit' && isset($_POST['bid'])){
-		//get edit info
-
-		// get post variables
-		$bid = $_POST['bid'];
-
-		// escape input and redifine variables
-		$bid = $mainConnection->escape_string($bid);
-		$list = "";
-
-		// get bride info from bid
-		$sql = "SELECT pri_notes FROM clients WHERE ID='$bid'";
-		$result = $mainConnection->query($sql) or die("cannot get info");
-		while($row = $result->fetch_assoc()){
-			$list .= $row['pri_notes'];
-		}
-
-		if($list == "" || $list == null){
-			$list = "test";
-		}
-		echo $list;
-
-	// check that type is search and a name is given
-	}elseif (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name']) && $_POST['name'] != "" && $_POST['name'] != null) {
+if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name']) && $_POST['name'] != "" && $_POST['name'] != null) {
 		// get search feedback
 
 
@@ -116,7 +92,11 @@ if ((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 
 				$total_cost_sql = "SELECT services.Service_Price FROM services WHERE Client_ID='$bid'";
 				$total_cost_sql_return = $mainConnection->query($total_cost_sql) or die("cannot get info on total cost.");
 				while($total_cost_row = $total_cost_sql_return->fetch_assoc()){
-					$totalCost += $total_cost_row['Service_Price'];
+					if($total_cost_row['IsCancelled'] == 1){
+						$totalCost -= $total_cost_row['Service_Price'];
+					}else{
+						$totalCost += $total_cost_row['Service_Price'];
+					}
 				}
 				$totalCost = round($totalCost*1.15, 2);  // rounds to nearest cent
 
