@@ -87,6 +87,9 @@ if($isedit == 1){
       padding: 0;
     }
     /* Service styling */
+    .hidden{
+      display: none;
+    }
     #serviceDate{
       width: 60px;
       font-size: 10px;
@@ -116,6 +119,7 @@ if($isedit == 1){
     #deleteService{
       font-size: 10px;
       float: right;
+      width: auto;
     }
 
     /* Macro Styling */
@@ -196,7 +200,7 @@ if($isedit == 1){
 
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:15px;">
-                  <label>All Services</label><br>
+                  <label>All Services (yyyy-mm-dd)</label><br>
                   <input class="col-md-1 col-sm-12 col-xs-12 col-lg-1" type="number" id="inputQty" value="1">
                   <select class="col-md-6 col-sm-12 col-xs-12 col-lg-6" id="serviceList">
                     <?php
@@ -235,7 +239,7 @@ if($isedit == 1){
                     $serviceDescription = $service->Description;
                   }
                   // add HTML to the variable to display
-                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input name="nogratuity'.$countId.'" style="display: none; value="on"><input name="svc'.$countId.'" value="'.$service->Service_ID.'" style="display: none;"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
+                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input name="nogratuity'.$countId.'" class="hidden" value="on"><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
 
                   // check if service was a removal or not
                   if($service->IsCancelled == 1){
@@ -483,30 +487,25 @@ if($isedit == 1){
         var serviceDropdown = document.getElementById("serviceList"); // select the dropdown element
         var serviceDesc = (serviceDropdown.options[serviceDropdown.selectedIndex].text); // get the description of the service
 
+        // update cost of servces
+        var servicePrice = parseFloat(serviceDropdown.options[serviceDropdown.selectedIndex].getAttribute("price")) * quantity; // get the price of the service and multiple it by the quantity
+        servicePrice = servicePrice * 1.15// add the mandatory tip to the cost
+        servicePrice = Math.ceil(servicePrice * 100) / 100; // round decimal up to nearest penny
+        if(remove === true){ // if removed service
+          servicePrice = servicePrice * -1; // set the price to negative so when it is added to the total prices it subtracts
+        }
+
         if(remove === true){ // remove service
           // create the new removed service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input name='del_nogratuity"+countId+"' style='display: none;' value='on'><input name='del_svc"+countId+"' value='"+serviceId+"' style='display: none;'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label><input name='del_disc"+countId+"' id='serviceDiscount' value='1'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='del_nogratuity"+countId+"' class='hidden' value='on'><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label><input name='del_disc"+countId+"' id='serviceDiscount' value='1'><input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }else{ // add service
           // create the new service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input name='new_nogratuity"+countId+"' style='display: none;' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' style='display: none;'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label><input name='new_disc"+countId+"' id='serviceDiscount' value='1'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label><input name='new_disc"+countId+"' id='serviceDiscount' value='1'><input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }
+
         // add the new service item to the list of services
         document.getElementById("currentListOfServices").innerHTML = document.getElementById("currentListOfServices").innerHTML + newCode;
 
-        // update input of count to be passed to addbride
-        document.getElementById("countId").value = countId;
-
-
-        var servicePrice = parseFloat(serviceDropdown.options[serviceDropdown.selectedIndex].getAttribute("price")) * quantity; // get the price of the service and multiple it by the quantity
-        servicePrice = servicePrice * 1.15// add the mandatory tip to the cost
-
-        servicePrice = Math.ceil(servicePrice * 100) / 100; // round decimal up to nearest penny
-
-        // update cost of servces
-        if(remove === true){ // remove service
-          servicePrice = servicePrice * -1; // set the price to negative so when it is added to the total prices it subtracts
-        }
-        
         document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
         document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
         // Increment counter
@@ -514,6 +513,19 @@ if($isedit == 1){
       }else{
         alert("Invalid Quantity! Must be within 1 to 99");
       }
+    }
+
+
+    function deleteElement(element){
+      var servicePrice = parseFloat(document.getElementById("currentListOfServices").children[4].children[0].value); // get the price of the service thats being removed
+      servicePrice = servicePrice * -1; // get the oposite of the value to remove its effect on the totals
+
+      document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
+
+      element.parentElement.remove();
+      // decrement counter
+      countId = countId - 1;
     }
 
     // datepicker for wedding and pre date
