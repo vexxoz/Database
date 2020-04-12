@@ -22,6 +22,7 @@ $plannerList = json_decode(listPlanners());
 $photoList = json_decode(listPhotographers());
 $consList = json_decode(listConsultants(1));
 $servicesList = json_decode(listServices());
+$discountList = json_decode(listDiscounts());
 
 // if editing get existing info from bride
 if($isedit == 1){
@@ -238,6 +239,14 @@ if($isedit == 1){
                   }else{
                     $serviceDescription = $service->Description;
                   }
+
+                  // get discount descriptions
+                  foreach($discountList as $discountItem){ // for each discountId check if it matches the one on the service
+                    if($discountItem->ID == $service->Discount_ID){ // if so then get the description
+                      $discountId = $discountItem->Description;
+                    }
+                  }
+
                   // add HTML to the variable to display
                   $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input name="nogratuity'.$countId.'" class="hidden" value="on"><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
 
@@ -253,7 +262,7 @@ if($isedit == 1){
                     $serviceHTML = $serviceHTML . '<label id="serviceName">'.$serviceDescription.'</label>';
                   }
                   // add final code to the variable to be displayed
-                  $serviceHTML = $serviceHTML . '<input disabled name="disc'.$countId.'" id="serviceDiscount" value="'.$service->Discount_ID.'"></div>';
+                  $serviceHTML = $serviceHTML . '<input disabled name="disc'.$countId.'" id="serviceDiscount" value="'.$discountId.'"></div>';
                   // move id up 1
                   $countId++;
                 }
@@ -472,11 +481,20 @@ if($isedit == 1){
     var countId = <?php echo $countId;  ?>; // plus 1 so there is no 0
     var today = new Date();
     var currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var discountList = <?php echo json_encode($discountList); ?>;
 
     function goBack(){
       window.location.assign("http://office.salonmaison.net/contracts/newbride-new.php");
     }
 
+    function createDiscountDropdown(){ // funtion to create a dropdown for the discounts
+      code = "<select name='new_disc"+countId+"' id='serviceDiscount'>";
+      for (var i = 0; i < discountList.length; i++){
+        code = code + "<option value='"+discountList[i].ID+"'>"+discountList[i].Description+"</option>";
+      }
+      code = code + "</select>";
+      return code;
+    }
 
     function addService(remove){ // add a service item to the list of services
       var quantity = document.getElementById("inputQty").value; // get the value of how many of service to add
@@ -500,8 +518,8 @@ if($isedit == 1){
           newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='del_nogratuity"+countId+"' class='hidden' value='on'><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label><input name='del_disc"+countId+"' id='serviceDiscount' value='1'><input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }else{ // add service
           // create the new service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label><input name='new_disc"+countId+"' id='serviceDiscount' value='1'><input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
-        }
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+        }//<input name='new_disc"+countId+"' id='serviceDiscount' value='1'>
 
         // add the new service item to the list of services
         document.getElementById("currentListOfServices").innerHTML = document.getElementById("currentListOfServices").innerHTML + newCode;
