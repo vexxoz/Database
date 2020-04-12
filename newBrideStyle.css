@@ -20,8 +20,9 @@ For card style
 */
 #card{
 	height: 300px;
-    -webkit-transition: background-color 1s;
-    transition: background-color 1s;
+  -webkit-transition: background-color 1s;
+  transition: background-color 1s;
+	margin-bottom: 25px;
 }
 #card:hover{
 	background-color: #f076a3;

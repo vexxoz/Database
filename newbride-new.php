@@ -20,7 +20,7 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
     <div class="col-md-12 col-sm-12 col-lg-12" id="alert" name="alert">
 			<h2>ALL USERS PLEASE READ</h2>
 			<span>To search type in any part of a brides name, hit enter to search. Some basic information will be displayed in the form of a card. You can print contracts by clicking the button on the card. To edit click edit button.</span>
-			<h3>NOTICE: Not all features are available yet. Only editing brides details and notes will work. Currently you cannot edit services, payments, or create new brides!</h3>
+			<h3>NOTICE: Not all features are available yet. Everything but editing services and payments is available!</h3>
     </div>
   </div>
 	<button class="col-md-1 col-sm-2 col-xs-2 col-lg-1" onclick="edit(0)">New Bride</button>

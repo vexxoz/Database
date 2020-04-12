@@ -1,4 +1,4 @@
-<?php
+'<?php
 require_once "dbfunctions.php";
 
 session_start();
@@ -21,6 +21,7 @@ $referredList = json_decode(listReferralSources());
 $plannerList = json_decode(listPlanners());
 $photoList = json_decode(listPhotographers());
 $consList = json_decode(listConsultants(1));
+$servicesList = json_decode(listServices());
 
 // if editing get existing info from bride
 if($isedit == 1){
@@ -56,6 +57,8 @@ if($isedit == 1){
     <link rel="stylesheet" type="text/css" href="css/jquery.timepicker.min.css">
     <script type="text/javascript" src="js/jquery.timepicker.min.js"></script>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <style>
     #brideInfo .row div, #inHouseNotes .row div, #serviceInfo .row div{
@@ -86,9 +89,11 @@ if($isedit == 1){
       font-size: 10px;
     }
     #serviceQuantity{
-      font-size: 10px;
+      font-size: 12px;
       width: 18px;
       text-align: center;
+      background: none;
+      border: none;
     }
     #serviceName{
       font-size: 12px;
@@ -184,9 +189,18 @@ if($isedit == 1){
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:15px;">
                   <label>All Services</label><br>
-                  <input value="" style="width: 69%;">
-                  <button>Add</button>
-                  <button>Remove</button>
+                  <input class="col-md-1 col-sm-12 col-xs-12 col-lg-1" id="inputQty" value="1">
+                  <select class="col-md-6 col-sm-12 col-xs-12 col-lg-6" id="serviceList">
+                    <?php
+                    $servicesListHTML = "";
+                    foreach($servicesList as $serviceItem){
+                      $servicesListHTML = $servicesListHTML . "<option selected value='".$serviceItem->ID."' price='".$serviceItem->Price."'>".$serviceItem->Description."</option>";
+                    }
+                    echo $servicesListHTML;
+                    ?>
+                  </select>
+                  <input class="col-md-2 col-sm-12 col-xs-12 col-lg-2" onclick="addService()" type="button" value="Add">
+                  <input class="col-md-2 col-sm-12 col-xs-12 col-lg-2" id="removeService" type="button" value="Remove">
                 </div>
               </div>
 
@@ -198,9 +212,11 @@ if($isedit == 1){
                 $totalCost = 0;
                 $paymentsHTML = "";
                 $totalPaid = 0;
+                $countId = 1;
                 if($isedit==0){}else{
                 // for each bride service
                 foreach ($brideServices as $service) {
+
                   // get date the service was added
                   $serviceDate = explode(" ", $service->Date_Added);
                   $serviceDate = $serviceDate[0];
@@ -211,7 +227,7 @@ if($isedit == 1){
                     $serviceDescription = $service->Description;
                   }
                   // add HTML to the variable to display
-                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.$serviceDate.'"><input disabled id="serviceQuantity" value="'.$service->Quantity.'">';
+                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input name="nogratuity'.$countId.'" style="display: none; value="on"><input name="svc'.$countId.'" value="'.$service->Service_ID.'" style="display: none;"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
 
                   // check if service was a removal or not
                   if($service->IsCancelled == 1){
@@ -225,7 +241,9 @@ if($isedit == 1){
                     $serviceHTML = $serviceHTML . '<label id="serviceName">'.$serviceDescription.'</label>';
                   }
                   // add final code to the variable to be displayed
-                  $serviceHTML = $serviceHTML . '<input disabled id="serviceDiscount" value="'.$service->Discount_ID.'"></div>';
+                  $serviceHTML = $serviceHTML . '<input disabled name="disc'.$countId.'" id="serviceDiscount" value="'.$service->Discount_ID.'"></div>';
+                  // move id up 1
+                  $countId++;
                 }
 
                 // echo the html of the bride's services
@@ -252,18 +270,7 @@ if($isedit == 1){
                 }
               }
                 ?>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="font-size: 12px; border-bottom: 1px solid pink;">
-                  <label>Total Cost of Services: $<?php echo ($totalCost); ?></label>
-                </div>
-                <!-- Echo the list of payments -->
-                <div>
-                  <?php echo $paymentsHTML; ?>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="font-size: 12px; border-top: 1px solid pink;">
-                  <label>Total Remaining: $
-                    <?php if(($totalCost-$totalPaid)<0.01){echo 0;}else{echo ($totalCost-$totalPaid); }
-                  ?></label>
-                </div>
+
 
                 <!-- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem">
                   <input id="serviceDate" value="1/18/2020">
@@ -273,8 +280,19 @@ if($isedit == 1){
                   <input id="serviceDiscount" value="0">
                 </div> -->
               </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="font-size: 12px; border-bottom: 1px solid pink;">
+                <label>Total Cost of Services: $<div id="totalCost"><?php echo ($totalCost); ?></div></label>
+              </div>
+              <!-- Echo the list of payments -->
+              <div>
+                <?php echo $paymentsHTML; ?>
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="font-size: 12px; border-top: 1px solid pink;">
+                <label>Total Remaining: $<div id="totalRemaining">
+                  <?php if(($totalCost-$totalPaid)<0.01){echo 0;}else{echo ($totalCost-$totalPaid); }
+                ?></div></label>
+              </div>
             </div>
-
           </div>
 
           <!-- Right Column -->
@@ -426,6 +444,7 @@ if($isedit == 1){
             </div>
           </div>
         </div><!-- End second row -->
+        <input id="countId" name="countId" value="0" type="hidden">
         <input name="fromValue" value="1" type="hidden">
         <input name="contractdate" value="<?php echo $contractdate; ?>" type="hidden">
         <input name="brideid" value="<?php echo $bid; ?>" type="hidden">
@@ -437,16 +456,49 @@ if($isedit == 1){
     </div><!-- End container row -->
   </body>
   <script>
-    // datepicker for wedding and pre date
-    $('#weddingdate').datepick({dateFormat: 'yyyy-mm-dd'});
-    $('#predate').datepick({dateFormat: 'yyyy-mm-dd'});
-    // Timepicker for pretime, start and done times
-    $('#pretime').timepicker({ 'step': 15 });
-    $('#starttime').timepicker({ 'step': 15 });
-    $('#donetime').timepicker({ 'step': 15 });
+    // all global variables needed for adding services
+    var countId = <?php echo $countId;  ?>; // plus 1 so there is no 0
+    var today = new Date();
+    var currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 
     function goBack(){
       window.location.assign("http://office.salonmaison.net/contracts/newbride-new.php");
     }
+
+
+    function addService(){ // add a service item to the list of services
+
+      // get info needed for the service item
+      var serviceId = document.getElementById("serviceList").value; // get the service id value
+      var serviceDropdown = document.getElementById("serviceList"); // select the dropdown element
+      var serviceDesc = (serviceDropdown.options[serviceDropdown.selectedIndex].text); // get the description of the service
+
+      // create the new service item
+      newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input name='new_nogratuity"+countId+"' style='display: none;' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' style='display: none;'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='1'><label id='serviceName'>"+serviceDesc+"</label><input name='new_disc"+countId+"' id='serviceDiscount' value='1'></div>";
+
+      // add the new service item to the list of services
+      document.getElementById("currentListOfServices").innerHTML = document.getElementById("currentListOfServices").innerHTML + newCode;
+
+      // update input of count to be passed to addbride
+      document.getElementById("countId").value = countId;
+
+      // update cost of servces
+      var servicePrice = parseInt(serviceDropdown.options[serviceDropdown.selectedIndex].getAttribute("price")); // get the price of the service
+      servicePrice = servicePrice * 1.15// add the mandatory tip to the cost
+      document.getElementById("totalCost").innerHTML = parseInt(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseInt(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
+
+      // Increment counter
+      countId = countId + 1;
+    }
+
+    // datepicker for wedding and pre date
+    $('#weddingdate').datepick({dateFormat: 'yyyy-mm-dd'});
+    $('#predate').datepick({dateFormat: 'yyyy-mm-dd'});
+
+    // Timepicker for pretime, start and done times
+    $('#pretime').timepicker({ 'step': 15 });
+    $('#starttime').timepicker({ 'step': 15 });
+    $('#donetime').timepicker({ 'step': 15 });
   </script>
 </html>
