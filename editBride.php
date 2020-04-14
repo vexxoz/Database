@@ -488,12 +488,49 @@ if($isedit == 1){
     }
 
     function createDiscountDropdown(){ // funtion to create a dropdown for the discounts
-      code = "<select name='new_disc"+countId+"' id='serviceDiscount'>";
+      code = "<select name='new_disc"+countId+"' onchange='updateDiscount(this)' id='serviceDiscount'>";
       for (var i = 0; i < discountList.length; i++){
-        code = code + "<option value='"+discountList[i].ID+"'>"+discountList[i].Description+"</option>";
+        code = code + "<option value='"+discountList[i].ID+"' isPercent='"+discountList[i].isPercentage+"' Discount='"+discountList[i].Discount+"'>"+discountList[i].Description+"</option>";
       }
       code = code + "</select>";
       return code;
+    }
+
+    function updateDiscount(element){
+      var initialPrice = parseFloat(element.parentElement.children[0].value); //get intial price of all the services
+      // console.log("intialprice:" + initialPrice);
+      var currentPrice = parseFloat(element.parentElement.children[1].value); // get the curren price with discounts
+      // console.log("currentPrice:" + currentPrice);
+      var quantity = parseFloat(element.parentElement.children[5].value); // get quantity of service
+      // console.log("quantity:" + quantity);
+      var isPercent = parseFloat(element.options[element.selectedIndex].getAttribute("isPercent")); // get boolean percent
+      // console.log("isPercent:" + isPercent);
+      var discount = parseFloat(element.options[element.selectedIndex].getAttribute("Discount"));  // get
+      // console.log("discount:" + discount);
+
+      var totalPrice = parseFloat(document.getElementById("totalCost").innerHTML);
+      var totalRemaining = parseFloat(document.getElementById("totalRemaining").innerHTML);
+
+      // negate the effect of the current price by * -1 so get price without service included
+      document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + (currentPrice*-1);// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + (currentPrice*-1);// update the total remaining
+
+      if(isPercent == 1){ // discount is percent
+        currentPrice = initialPrice*(1-(discount/100));// dont need to get tip or quantity since the total includes tip + price of servide + quantities
+      }else{ // discount is $ amount
+        if(currentPrice < 0){// if price is negative (removed service)
+          currentPrice = initialPrice + (discount*1.15*quantity); // negative with discount = less negative
+        }else{
+          currentPrice = initialPrice - (discount*1.15*quantity); // positive with discount = more negative
+        }
+      }
+      currentPrice = Math.ceil(currentPrice * 100) / 100; // round decimal up to nearest penny
+      // update the new currentPrice
+      element.parentElement.children[1].value = currentPrice;
+
+      // add the new price of the service to the total
+      document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + currentPrice;// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + currentPrice;// update the total remaining
     }
 
     function addService(remove){ // add a service item to the list of services
@@ -515,14 +552,14 @@ if($isedit == 1){
 
         if(remove === true){ // remove service
           // create the new removed service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='del_nogratuity"+countId+"' class='hidden' value='on'><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label><input name='del_disc"+countId+"' id='serviceDiscount' value='1'><input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='del_nogratuity"+countId+"' class='hidden' value='on'><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }else{ // add service
           // create the new service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='on'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }//<input name='new_disc"+countId+"' id='serviceDiscount' value='1'>
 
         // add the new service item to the list of services
-        document.getElementById("currentListOfServices").innerHTML = document.getElementById("currentListOfServices").innerHTML + newCode;
+        document.getElementById("currentListOfServices").insertAdjacentHTML('beforeend', newCode); // using insertAdjacentHTML keeps discounts on other services from glitching
 
         document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
         document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
@@ -535,7 +572,7 @@ if($isedit == 1){
 
 
     function deleteElement(element){
-      var servicePrice = parseFloat(document.getElementById("currentListOfServices").children[4].children[0].value); // get the price of the service thats being removed
+      var servicePrice = parseFloat(element.parentElement.children[1].value); // get the price of the service thats being removed
       servicePrice = servicePrice * -1; // get the oposite of the value to remove its effect on the totals
 
       document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
