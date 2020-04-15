@@ -13,7 +13,8 @@ if((isset($_GET['bid']) && $_GET['bid'] != "" && $_GET['bid'] != NULL && is_nume
     $isedit = 1;
   }
 }else{
-  header("Location: newbride-new.php");
+  $reportCode = urlencode("No Bride Selected!");
+  header("Location: newbride-new.php?msg=" . $reportCode . "&color=red");
 }
 
 // Get general information

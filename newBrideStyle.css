@@ -1,7 +1,8 @@
 #alert{
-	background-color: lightcoral;
+	/* background-color: lightcoral; */
     text-align: center;
-    color: white;
+    /* color: white; */
+		font-size: 25px;
 }
 #search{
 	margin-top: 25px;

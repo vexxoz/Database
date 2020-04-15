@@ -17,9 +17,26 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 </head>
 <body>
   <div class="row">
-    <div class="col-md-12 col-sm-12 col-lg-12" id="alert" name="alert">
 
-    </div>
+			<?php
+				if(isset($_GET['msg'])){
+					if(isset($_GET['color']) && $_GET['color'] == "green"){
+						$color = "alert-success";
+					}else if(isset($_GET['color']) && $_GET['color'] == "red"){
+						$color = "alert-danger";
+					}else{
+						$color = "alert-info";
+					}
+
+					echo '<div class="col-md-12 col-sm-12 col-lg-12 '.$color.'" id="alert" name="alert">';
+					echo $_GET['msg'] . "</br>";
+					echo "</div>";
+				}
+			 ?>
+
+		<div class="col-md-12 col-sm-12 col-lg-12" style="text-align: center;">
+			<span style="font-size: 20px;">Any Bugs? Report them <u><a style="color:black;" href="./bugreport.php">HERE</a></u></span>
+		</div>
   </div>
 	<button class="col-md-1 col-sm-2 col-xs-2 col-lg-1" onclick="edit(0)">New Bride</button>
   <input class="col-md-5 col-sm-8 col-xs-8 col-lg-5 offset-md-2 offset-lg-2" type="text" id="search" name="search" placeholder="Type to start search" autocomplete="off">
