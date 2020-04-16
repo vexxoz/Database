@@ -89,23 +89,34 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 
 				// get total cost of services
 				$totalCost = 0;
-				$total_cost_sql = "SELECT services.Service_Price, services.IsCancelled FROM services WHERE Client_ID='$bid'";
+				$total_cost_sql = "SELECT services.Service_Price, services.IsCancelled, services.noGratuity FROM services WHERE Client_ID='$bid'";
 				$total_cost_sql_return = $mainConnection->query($total_cost_sql) or die("cannot get info on total cost.");
 				while($total_cost_row = $total_cost_sql_return->fetch_assoc()){
-					if($total_cost_row['IsCancelled'] == 1){
-						$totalCost -= $total_cost_row['Service_Price'];
-					}else{
-						$totalCost += $total_cost_row['Service_Price'];
+					if($total_cost_row['IsCancelled'] == 1){ // removed service
+						if($total_cost_row['noGratuity'] == 1){//tip
+							$totalCost -= round($total_cost_row['Service_Price']*1.15, 2);  // rounds to nearest cent
+						}else{//no tip
+							$totalCost -= $total_cost_row['Service_Price'];
+						}
+					}else{ // normal service
+						if($total_cost_row['noGratuity'] == 1){ //tip
+							$totalCost += round($total_cost_row['Service_Price']*1.15, 2);  // rounds to nearest cent
+						}else{ //no tip
+							$totalCost += $total_cost_row['Service_Price'];
+						}
 					}
 				}
-				$totalCost = round($totalCost*1.15, 2);  // rounds to nearest cent
 
 				// get total of payments
 				$totalPaid = 0;
-				$total_paid_sql = "SELECT payments.Amount FROM payments WHERE Client_ID='$bid'";
+				$total_paid_sql = "SELECT payments.Amount, payments.isCredit FROM payments WHERE Client_ID='$bid'";
 				$total_paid_sql_return = $mainConnection->query($total_paid_sql) or die("cannot get info on total paid.");
 				while($total_paid_row = $total_paid_sql_return->fetch_assoc()){
-					$totalPaid += $total_paid_row['Amount'];
+					if($total_paid_row['isCredit'] == 1){// if credit
+						$totalPaid -= $total_paid_row['Amount'];
+					}else{
+						$totalPaid += $total_paid_row['Amount'];
+					}
 				}
 
 				$totalOwe = $totalCost-$totalPaid;

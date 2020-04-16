@@ -269,9 +269,12 @@ if($isedit == 1){
                   }
 
                   $tip = "";
+                  $servicePrice = 0;
                   if($service->noGratuity == 1){
+                    $servicePrice = $service->Service_Price*1.15;
                     $tip = '<option value="on">No tip</option><option value="off" selected>Tip</option>';
                   }else{
+                    $servicePrice = $service->Service_Price;
                     $tip = '<option value="on" selected >No tip</option><option value="off">Tip</option>';
                   }
 
@@ -281,27 +284,23 @@ if($isedit == 1){
                   // check if service was a removal or not
                   if($service->IsCancelled == 1){
                     //decrease Cost
-                    $totalCost = $totalCost - $service->Service_Price;
+                    $totalCost = $totalCost - $servicePrice;
                     // set color of text to be red
                     $serviceHTML = $serviceHTML . '<label id="removedServiceName">'.$serviceDescription.'</label>';
                   }else{
                     // increase cost
-                    $totalCost = $totalCost + $service->Service_Price;
+                    $totalCost = $totalCost + $servicePrice;
                     $serviceHTML = $serviceHTML . '<label id="serviceName">'.$serviceDescription.'</label>';
                   }
                   // add final code to the variable to be displayed
                   $serviceHTML = $serviceHTML . '<input disabled name="disc'.$countId.'" id="serviceDiscount" value="'.$discountId.'"></div>';
+
                   // move id up 1
                   $countId++;
                 }
 
                 // echo the html of the bride's services
                 echo $serviceHTML;
-
-                // add tip to the total
-                $totalCost = $totalCost*1.15;
-
-                // echo "Total Cost of Services: $" . $totalCost . "<br>";
 
 
                 ///// PAYMENTS
@@ -310,12 +309,14 @@ if($isedit == 1){
                   $date = $date[0];
                   if($payment->isCredit == 1){
                     $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.$date.'"><label id="serviceName">Credit of: $'.$payment->Amount.'</label></div>';
+                    $totalPaid = $totalPaid - $payment->Amount;
 
                   }else{
                     $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.$date.'"><label id="serviceName">Payment of: $'.$payment->Amount.'</label></div>';
+                    $totalPaid = $totalPaid + $payment->Amount;
                   }
 
-                  $totalPaid = $totalPaid + $payment->Amount;
+
                 }
               }
                 ?>
@@ -347,7 +348,7 @@ if($isedit == 1){
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="font-size: 12px; border-top: 1px solid pink;">
                 <label>Total Remaining: $<span id="totalRemaining">
-                  <?php if(($totalCost-$totalPaid)<0.01){echo 0;}else{echo ($totalCost-$totalPaid); }
+                  <?php echo $totalCost-$totalPaid;
                 ?></span></label>
               </div>
             </div>
@@ -643,10 +644,10 @@ if($isedit == 1){
 
         if(remove === true){ // remove service
           // create the new removed service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='del_nogratuity"+countId+"' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='del_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }else{ // add service
           // create the new service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='new_nogratuity"+countId+"' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='new_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }//<input name='new_disc"+countId+"' id='serviceDiscount' value='1'>
 
         // add the new service item to the list of services
@@ -659,6 +660,32 @@ if($isedit == 1){
       }else{
         alert("Invalid Quantity! Must be within 1 to 99");
       }
+    }
+
+    function updateTip(element){
+      var currentPrice = parseFloat(element.parentElement.children[1].value); // get the curren price with discounts
+
+      var noGratuity = element.value;
+
+
+      // negate the effect of the current price by * -1 so get price without service included
+      document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + (currentPrice*-1);// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + (currentPrice*-1);// update the total remaining
+
+      var newPrice = 0;
+
+      if(noGratuity == "on"){
+        newPrice = parseInt(currentPrice /1.15);
+      }else{
+        newPrice = (currentPrice *1.15);
+      }
+
+      newPrice = Math.ceil(newPrice * 100) / 100; // round decimal up to nearest penny
+      // update the new currentPrice
+      element.parentElement.children[1].value = newPrice;
+
+      document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + newPrice;// update the total cost
+      document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + newPrice;// update the total remaining
     }
 
 
