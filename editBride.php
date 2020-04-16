@@ -96,6 +96,10 @@ if($isedit == 1){
       width: 60px;
       font-size: 10px;
     }
+    #gratuity{
+      width: 60px;
+      font-size: 10px;
+    }
     #serviceQuantity{
       font-size: 12px;
       width: 19px;
@@ -264,8 +268,15 @@ if($isedit == 1){
                     }
                   }
 
+                  $tip = "";
+                  if($service->noGratuity == 1){
+                    $tip = '<option value="on">No tip</option><option value="off" selected>Tip</option>';
+                  }else{
+                    $tip = '<option value="on" selected >No tip</option><option value="off">Tip</option>';
+                  }
+
                   // add HTML to the variable to display
-                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input name="nogratuity'.$countId.'" class="hidden" value="off"><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
+                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><select disable id="gratuity" name="nogratuity'.$countId.'">'.$tip.'</select><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
 
                   // check if service was a removal or not
                   if($service->IsCancelled == 1){
@@ -632,10 +643,10 @@ if($isedit == 1){
 
         if(remove === true){ // remove service
           // create the new removed service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='del_nogratuity"+countId+"' class='hidden' value='off'><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='del_nogratuity"+countId+"' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }else{ // add service
           // create the new service item
-          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><input name='new_nogratuity"+countId+"' class='hidden' value='off'><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+          newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='new_nogratuity"+countId+"' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
         }//<input name='new_disc"+countId+"' id='serviceDiscount' value='1'>
 
         // add the new service item to the list of services
