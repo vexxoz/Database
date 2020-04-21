@@ -23,27 +23,44 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 			// escape input and define variables
 			$search = $mainConnection->escape_string($search);
 			$year = $mainConnection->escape_string($year);
+
 			$list = "";
+			$isString = 0;
 
-			// changing sql statements dependent on the typed input
-			if(stripos($search, " ") > -1){
-				// gets exactly first name and part of last name
-				$search = explode(" ", $search);
-				// gets any part of last or first name but not both at same time
-				// checks if a year is specified
-				if($year == "ALL"){
-					$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search[1]', '%') AND Client_FirstName='$search[0]'";
-				}else{
-					$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search[1]', '%') AND Client_FirstName='$search[0]' AND Event_Date LIKE CONCAT('%', '$year', '%')";
-
-				}
+			if(($timestamp = strtotime($search)) === false){
+				$isString = 1;
 			}else{
-				// checks if a year is specified
+				$timestamp =  date('m-d', $timestamp);
 				if($year == "ALL"){
-					$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search', '%') OR Client_FirstName LIKE CONCAT('%', '$search', '%')";
-				}else{
+					$year = "%";
+				}else {
+					$year = $year . "-";
+				}
+				$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Event_Date LIKE CONCAT('$year', '$timestamp', '%')";
+			}
+
+			// if is not a date
+			if($isString === 1){
+				// changing sql statements dependent on the typed input
+				if(stripos($search, " ") > -1){
+					// gets exactly first name and part of last name
+					$search = explode(" ", $search);
 					// gets any part of last or first name but not both at same time
-					$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search', '%') OR Client_FirstName LIKE CONCAT('%', '$search', '%') AND Event_Date LIKE CONCAT('%', '$year', '%')";
+					// checks if a year is specified
+					if($year == "ALL"){
+						$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search[1]', '%') AND Client_FirstName LIKE CONCAT('%', '$search[0]', '%')";
+					}else{
+						$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search[1]', '%') AND Client_FirstName LIKE CONCAT('%', '$search[0]', '%') AND Event_Date LIKE CONCAT($year', '%')";
+
+					}
+				}else{
+					// checks if a year is specified
+					if($year == "ALL"){
+						$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search', '%') OR Client_FirstName LIKE CONCAT('%', '$search', '%')";
+					}else{
+						// gets any part of last or first name but not both at same time
+						$sql = "SELECT clients.Client_FirstName, clients.Client_LastName, clients.ID, clients.Event_Date, clients.Start_Time, clients.Done_Time, clients.Dayof_Address, clients.Client_Photographer_ID, clients.Client_Planner_ID FROM clients WHERE Client_LastName LIKE CONCAT('%', '$search', '%') OR Client_FirstName LIKE CONCAT('%', '$search', '%') AND Event_Date LIKE CONCAT('$year', '%')";
+					}
 				}
 			}
 			// run the sql statement
