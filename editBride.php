@@ -108,7 +108,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (mm/dd/yyyy)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (yyyy-mm-dd)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Time</label><br><input id="pretime" name="prestarttime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
               </div>
 
@@ -143,7 +143,7 @@ if($isedit == 1){
 
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:15px;">
-                  <label>All Services (mm/dd/yyyy)</label><br>
+                  <label>All Services (yyyy-mm-dd)</label><br>
                   <input class="col-md-1 col-sm-12 col-xs-12 col-lg-1" type="number" id="inputQty" value="1">
                   <select class="col-md-6 col-sm-12 col-xs-12 col-lg-6" id="serviceList">
                     <?php
@@ -284,7 +284,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (mm/dd/yyyy)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (yyyy-mm-dd)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>ROTD</label><br><input name="readyontheday" value="<?php if($isedit==0){}else{echo $brideInfo[0]->rotd;}?>"></div>
               </div>
 

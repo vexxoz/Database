@@ -130,10 +130,10 @@ function addService(remove){ // add a service item to the list of services
 
     if(remove === true){ // remove service
       // create the new removed service item
-      newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='del_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+      newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='del_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='del_svc"+countId+"' value='"+serviceId+"' class='hidden'><input name='del_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='del_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='removedServiceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
     }else{ // add service
       // create the new service item
-      newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='new_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input readonly name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
+      newCode = "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' id='serviceItem'><input disabled class='hidden' id='initialPrice' value='"+servicePrice+"'><input disabled class='hidden' id='price' value='"+servicePrice+"'><select id='gratuity' name='new_nogratuity"+countId+"' onchange='updateTip(this)' value='off'><option value='on'>No tip</option><option value='off' selected>Tip</option></select><input name='new_svc"+countId+"' value='"+serviceId+"' class='hidden'><input name='new_dateadded"+countId+"' id='serviceDate' value='"+currentDate+"'><input readonly name='new_qty"+countId+"' id='serviceQuantity' value='"+quantity+"'><label id='serviceName'>"+serviceDesc+"</label>"+createDiscountDropdown()+"<input id='deleteService' type='button' onclick='deleteElement(this)' value='Delete'></div>";
     }//<input name='new_disc"+countId+"' id='serviceDiscount' value='1'>
 
     // add the new service item to the list of services
@@ -141,6 +141,12 @@ function addService(remove){ // add a service item to the list of services
 
     document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
     document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
+
+    var list = document.getElementById("currentListOfServices");//get the list of services
+    var dateItem = list.children[list.childElementCount-1].children[4]; // get the most recent element datebox
+
+    // initialize the date Datepicker
+    $(dateItem).datepick({dateFormat: 'mm/dd/yyyy'});
     // Increment counter
     countId = countId + 1;
   }else{
