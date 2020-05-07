@@ -1,6 +1,10 @@
 <?php
 session_start();
-if ((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)) {
+if ((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)) {//check if logged in
+	// check that session is valid
+	require_once "session_validate.php";
+	$session_validate = new Session_Validater();
+	$session_validate->check();
 	// connect to database to get info
 	// ini_set('include_path','/var/www/html/contracts/lib/');
 	// include("auth2.php");

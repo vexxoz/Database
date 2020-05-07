@@ -1,7 +1,11 @@
 <?php
-session_start();
-if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1){
-
+if(!isset($_SESSION)){
+    session_start();
+}
+require_once "session_validate.php";
+if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1){// check if logged in with correct permissions
+		$session_validate = new Session_Validater();
+		$session_validate->check();
 }else{
 	header("Location: ../calendar/index.php");
 }
