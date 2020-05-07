@@ -188,8 +188,8 @@ function deleteElement(element){
 }
 
 // datepicker for wedding and pre date
-$('#weddingdate').datepick({dateFormat: 'yyyy-mm-dd'});
-$('#predate').datepick({dateFormat: 'yyyy-mm-dd'});
+$('#weddingdate').datepick({dateFormat: 'mm/dd/yyyy'});
+$('#predate').datepick({dateFormat: 'mm/dd/yyyy'});
 
 // Timepicker for pretime, start and done times
 $('#pretime').timepicker({ 'step': 15 });

@@ -1,9 +1,3 @@
-#alert{
-	/* background-color: lightcoral; */
-    text-align: center;
-    /* color: white; */
-		font-size: 25px;
-}
 #search{
 	margin-top: 25px;
 	border-radius: 25px;
@@ -21,9 +15,8 @@ For card style
 */
 #card{
 	height: 300px;
-  -webkit-transition: background-color 1s;
-  transition: background-color 1s;
-	margin-bottom: 25px;
+    -webkit-transition: background-color 1s;
+    transition: background-color 1s;
 }
 #card:hover{
 	background-color: #f076a3;

@@ -108,7 +108,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (yyyy-mm-dd)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo $predateTime[0];}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (mm/dd/yyyy)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Time</label><br><input id="pretime" name="prestarttime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
               </div>
 
@@ -143,7 +143,7 @@ if($isedit == 1){
 
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:15px;">
-                  <label>All Services (yyyy-mm-dd)</label><br>
+                  <label>All Services (mm/dd/yyyy)</label><br>
                   <input class="col-md-1 col-sm-12 col-xs-12 col-lg-1" type="number" id="inputQty" value="1">
                   <select class="col-md-6 col-sm-12 col-xs-12 col-lg-6" id="serviceList">
                     <?php
@@ -200,7 +200,7 @@ if($isedit == 1){
                   }
 
                   // add HTML to the variable to display
-                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled class="hidden" id="price" value="'.$servicePrice.'"><select disable id="gratuity" name="nogratuity'.$countId.'">'.$tip.'</select><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.$serviceDate.'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
+                  $serviceHTML = $serviceHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled class="hidden" id="price" value="'.$servicePrice.'"><select disable id="gratuity" name="nogratuity'.$countId.'">'.$tip.'</select><input name="svc'.$countId.'" value="'.$service->Service_ID.'" class="hidden"><input disabled name="dateadded'.$countId.'" id="serviceDate" value="'.date('m/d/Y', strtotime($serviceDate)).'"><input disabled name="qty'.$countId.'" id="serviceQuantity" value="'.$service->Quantity.'">';
 
                   // check if service was a removal or not
                   if($service->IsCancelled == 1){
@@ -229,11 +229,11 @@ if($isedit == 1){
                   $date = explode(" ", $payment->Date);
                   $date = $date[0];
                   if($payment->isCredit == 1){
-                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.$date.'"><label id="serviceName">Credit of: $'.$payment->Amount.'</label></div>';
+                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Credit of: $'.$payment->Amount.'</label></div>';
                     $totalPaid = $totalPaid - $payment->Amount;
 
                   }else{
-                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.$date.'"><label id="serviceName">Payment of: $'.$payment->Amount.'</label></div>';
+                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Payment of: $'.$payment->Amount.'</label></div>';
                     $totalPaid = $totalPaid + $payment->Amount;
                   }
 
@@ -256,7 +256,7 @@ if($isedit == 1){
 
               </div>
               <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <input class="paymentInput" step="0.01" id="paymentAmount" type="number">
+                <input class="paymentInput" step="0.01" id="paymentAmount" type="number" placeholder="Amount $">
                 <input class="paymentInput" style="padding: initial;" type="button" onclick="addPayment(false)" value="Payment">
                 <input class="paymentInput" type="button" onclick="addPayment(true)" value="Credit">
               </div>
@@ -284,7 +284,7 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (yyyy-mm-dd)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo $predateTime[0];}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (mm/dd/yyyy)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
                 <div class="col-md-6 col-sm-12 col-xs-12"><label>ROTD</label><br><input name="readyontheday" value="<?php if($isedit==0){}else{echo $brideInfo[0]->rotd;}?>"></div>
               </div>
 
@@ -450,7 +450,7 @@ if($isedit == 1){
   // all global variables needed for adding services
   var countId = <?php echo $countId;  ?>; // plus 1 so there is no 0
   var today = new Date();
-  var currentDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  var currentDate = (today.getMonth()+1)+'/'+today.getDate()+'/'+today.getFullYear();
   var discountList = <?php echo json_encode($discountList); ?>;
   </script>
   <script type="text/javascript" src="js/editBrideFunctions.js"></script>
