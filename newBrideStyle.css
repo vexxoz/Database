@@ -1,7 +1,20 @@
+#alert{
+	/* background-color: lightcoral; */
+    text-align: center;
+    /* color: white; */
+		font-size: 25px;
+}
 #search{
 	margin-top: 25px;
-	border-radius: 25px;
 	font-size: 20px;
+}
+#cbdButton{
+	margin-top: 25px;
+	font-size: 20px;
+}
+.row .menubar{
+  margin-top: 25px;
+  font-size: 20px;
 }
 #resultsBox{
 	margin-top: 20px;
@@ -15,8 +28,9 @@ For card style
 */
 #card{
 	height: 300px;
-    -webkit-transition: background-color 1s;
-    transition: background-color 1s;
+  -webkit-transition: background-color 1s;
+  transition: background-color 1s;
+	margin-bottom: 25px;
 }
 #card:hover{
 	background-color: #f076a3;
@@ -25,6 +39,12 @@ For card style
 /*
 For list style
 */
+#card span{
+  font-size: 13px;
+}
+#card #pdf{
+  height: 30px;
+}
 #entry{
 	width: 100%;
 	font-size: 17px;
