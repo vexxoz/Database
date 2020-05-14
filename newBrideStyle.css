@@ -15,6 +15,7 @@
 .row .menubar{
   margin-top: 25px;
   font-size: 20px;
+  min-width: 100px;
 }
 #resultsBox{
 	margin-top: 20px;
