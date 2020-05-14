@@ -46,12 +46,27 @@ function deleteExistingService(element, id, serviceId){
     parent.insertAdjacentHTML('beforeend', newCode); // using insertAdjacentHTML keeps discounts on other services from glitching
     parent.style.display = "none"; // set the service invisible
 
-  var servicePrice = parseFloat(element.parentElement.children[0].value); // get the price of the service thats being removed
-  servicePrice = servicePrice * -1; // get the oposite of the value to remove its effect on the totals
-  document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
-  document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
-  // decrement counter
-  countId = countId - 1;
+    var servicePrice = parseFloat(element.parentElement.children[0].value); // get the price of the service thats being removed
+    servicePrice = servicePrice * -1; // get the oposite of the value to remove its effect on the totals
+    document.getElementById("totalCost").innerHTML = parseFloat(document.getElementById("totalCost").innerHTML) + servicePrice;// update the total cost
+    document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
+  }
+}
+
+function deleteExistingPayment(element, id, serviceId, isCredit){
+  // confirm delete
+  if(confirm("Are you sure you want to delete this service? There is no undo! Click OK to delete.")){
+    var newCode = '<input type="hidden" name="deletepmt'+id+'" value="'+serviceId+'">'; // new text to be inserted to delete the service
+    var parent = element.parentElement; // set parent variable to this buttons the service element
+    parent.insertAdjacentHTML('beforeend', newCode); // using insertAdjacentHTML keeps discounts on other services from glitching
+    parent.style.display = "none"; // set the service invisible
+
+    var servicePrice = parseFloat(element.parentElement.children[0].value); // get the price of the service thats being removed
+    if(isCredit){
+      servicePrice = servicePrice * -1; // if credit negate to make removal subtract from total remaining
+    }
+    // add the payment to the total remaining
+    document.getElementById("totalRemaining").innerHTML = parseFloat(document.getElementById("totalRemaining").innerHTML) + servicePrice;// update the total remaining
   }
 }
 

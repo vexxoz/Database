@@ -230,14 +230,15 @@ if($isedit == 1){
                   $date = explode(" ", $payment->Date);
                   $date = $date[0];
                   if($payment->isCredit == 1){
-                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Credit of: $'.$payment->Amount.'</label></div>';
+                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled class="hidden" id="price" value="'.$payment->Amount.'"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Credit of: $'.$payment->Amount.'</label><input id="deleteService" type="button" onclick="deleteExistingPayment(this, '.$countId.', '.$payment->ID.', true)" value="Delete"></div>';
                     $totalPaid = $totalPaid - $payment->Amount;
 
                   }else{
-                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Payment of: $'.$payment->Amount.'</label></div>';
+                    $paymentsHTML = $paymentsHTML . '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="serviceItem"><input disabled class="hidden" id="price" value="'.$payment->Amount.'"><input disabled id="serviceDate" value="'.date('m/d/Y', strtotime($date)).'"><label id="serviceName">Payment of: $'.$payment->Amount.'</label><input id="deleteService" type="button" onclick="deleteExistingPayment(this, '.$countId.', '.$payment->ID.', false)" value="Delete"></div>';
                     $totalPaid = $totalPaid + $payment->Amount;
                   }
-
+                  // move id up 1
+                  $countId++;
 
                 }
               }
