@@ -2,6 +2,9 @@
 require_once "dbfunctions.php";
 require_once "session_validate.php";
 
+// set the timezone so that the date time entires are correnct
+date_default_timezone_set('America/Los_Angeles');
+
 if(!isset($_SESSION)){
     session_start();
 }
@@ -91,26 +94,40 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>First Name</label><br><input required name="firstname" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Client_FirstName;} ?>"></div>
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Last Name</label><br><input required name="lastname" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Client_LastName;} ?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>First Name</label><br><input required name="firstname" value="<?php if($isedit!=0){echo $brideInfo[0]->Client_FirstName;} ?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Last Name</label><br><input required name="lastname" value="<?php if($isedit!=0){echo $brideInfo[0]->Client_LastName;} ?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Email</label><br><input name="email" type="email" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Client_Email;} ?>"></div>
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Phone</label><br><input name="phone" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Client_Phone;} ?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Email</label><br><input name="email" type="email" value="<?php if($isedit!=0){echo $brideInfo[0]->Client_Email;} ?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Phone</label><br><input name="phone" value="<?php if($isedit!=0){echo $brideInfo[0]->Client_Phone;} ?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12"><label>Bride's Address</label><br><input name="address" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Client_Address;} ?>"></div>
+                <div class="col-md-12 col-sm-12 col-xs-12"><label>Bride's Address</label><br><input name="address" value="<?php if($isedit!=0){echo $brideInfo[0]->Client_Address;} ?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12"><label>Pre Address</label><br><input name="preaddress" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Pre_Address;} ?>"></div>
+                <div class="col-md-12 col-sm-12 col-xs-12"><label>Pre Address</label><br><input name="preaddress" value="<?php if($isedit!=0){echo $brideInfo[0]->Pre_Address;} ?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (mm/dd/yyyy)</label><br><input id="predate" name="predate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Time</label><br><input id="pretime" name="prestarttime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Pre_DateTime); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Date (mm/dd/yyyy)</label><br><input id="predate" name="predate" value="<?php
+                 if($isedit!=0){
+                   $predateTime = explode(" ", $brideInfo[0]->Pre_DateTime);
+                   if($predateTime[0] != "1970-01-01" && $predateTime[0] != "0000-00-00"){// do not display if the date is not real
+                    echo date('m/d/Y', strtotime($predateTime[0]));
+                   }
+                 }
+                 ?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Pre Time</label><br><input id="pretime" name="prestarttime" value="<?php
+                if($isedit!=0){
+                  $predateTime = explode(" ", $brideInfo[0]->Pre_DateTime);
+                  if($predateTime[1] != "00:00:00"){// dont display if time is not set
+                    echo date('h:ia', strtotime($predateTime[1]));
+                  }
+                }
+                ?>"></div>
               </div>
 
               <div class="row">
@@ -169,7 +186,7 @@ if($isedit == 1){
                 $paymentsHTML = "";
                 $totalPaid = 0;
                 $countId = 1;
-                if($isedit==0){}else{
+                if($isedit!=0){
                 // for each bride service
                 foreach ($brideServices as $service) {
 
@@ -286,19 +303,19 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (mm/dd/yyyy)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>ROTD</label><br><input name="readyontheday" value="<?php if($isedit==0){}else{echo $brideInfo[0]->rotd;}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Wedding Date (mm/dd/yyyy)</label><br><input required id="weddingdate" name="weddingdate" value="<?php if($isedit!=0){$predateTime = explode(" ", $brideInfo[0]->Event_Date); echo date('m/d/Y', strtotime($predateTime[0]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>ROTD</label><br><input name="readyontheday" value="<?php if($isedit!=0){echo $brideInfo[0]->rotd;}?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Start Time</label><br><input required id="starttime" name="starttime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Start_Time); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
-                <div class="col-md-6 col-sm-12 col-xs-12"><label>Done Time</label><br><input required id="donetime" name="donetime" value="<?php if($isedit==0){}else{$predateTime = explode(" ", $brideInfo[0]->Done_Time); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Start Time</label><br><input required id="starttime" name="starttime" value="<?php if($isedit!=0){$predateTime = explode(" ", $brideInfo[0]->Start_Time); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
+                <div class="col-md-6 col-sm-12 col-xs-12"><label>Done Time</label><br><input required id="donetime" name="donetime" value="<?php if($isedit!=0){$predateTime = explode(" ", $brideInfo[0]->Done_Time); echo date('h:ia', strtotime($predateTime[1]));}?>"></div>
               </div>
 
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <label>Wedding Day Address</label><br>
-                  <input name="dayofaddress" list="locations" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Dayof_Address; }?>">
+                  <input name="dayofaddress" list="locations" value="<?php if($isedit!=0){echo $brideInfo[0]->Dayof_Address; }?>">
                   <?php
                     $onsiteHTML = "<datalist id='locations'>";
                     foreach ($onsiteLocations as $onsiteItem) {
@@ -404,20 +421,20 @@ if($isedit == 1){
               </div>
 
               <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12"><label>Driving Fee City</label><br><input name="drivingcity" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Driving_City; }?>"></div>
+                <div class="col-md-12 col-sm-12 col-xs-12"><label>Driving Fee City</label><br><input name="drivingcity" value="<?php if($isedit!=0){echo $brideInfo[0]->Driving_City; }?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12"><label>Notes On Contract</label><br><input name="drivingnote" value="<?php if($isedit==0){}else{echo $brideInfo[0]->Driving_Note; }?>"></div>
+                <div class="col-md-12 col-sm-12 col-xs-12"><label>Notes On Contract</label><br><input name="drivingnote" value="<?php if($isedit!=0){echo $brideInfo[0]->Driving_Note; }?>"></div>
               </div>
 
               <div class="row">
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->caBride == 1){echo "checked";}} ?> type="checkbox" name="caBride" value="1"><label>CA Bride</label></div>
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->specialEvent == 1){echo "checked";}} ?> type="checkbox" name="specialEvent" value="1"><label>Special Event</label></div>
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->totalCancel == 1){echo "checked";}} ?> type="checkbox" name="totalCancel" value="1"><label>Booking Cancelled</label></div>
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->IsEmailed == 1){echo "checked";}} ?> type="checkbox" name="ce" value="1"><label>Contract Emailed</label></div>
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->IsContractSigned == 1){echo "checked";}} ?> type="checkbox" name="cs" value="1"><label>Contract Signed</label></div>
-                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit==0){}else{if($brideInfo[0]->hadPresession == 1){echo "checked";}} ?> type="checkbox" name="pd" value="1"><label>Pre-Session Done</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->caBride == 1){echo "checked";}} ?> type="checkbox" name="caBride" value="1"><label>CA Bride</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->specialEvent == 1){echo "checked";}} ?> type="checkbox" name="specialEvent" value="1"><label>Special Event</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->totalCancel == 1){echo "checked";}} ?> type="checkbox" name="totalCancel" value="1"><label>Booking Cancelled</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->IsEmailed == 1){echo "checked";}} ?> type="checkbox" name="ce" value="1"><label>Contract Emailed</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->IsContractSigned == 1){echo "checked";}} ?> type="checkbox" name="cs" value="1"><label>Contract Signed</label></div>
+                <div class="col-md-4 col-sm-4 col-xs-4"><input id="checkbox" <?php if($isedit!=0){if($brideInfo[0]->hadPresession == 1){echo "checked";}} ?> type="checkbox" name="pd" value="1"><label>Pre-Session Done</label></div>
               </div>
 
             </div>
@@ -434,15 +451,15 @@ if($isedit == 1){
             </div>
             <div class="row">
               <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                <div><label>Pre-Session Notes</label><br><textarea name="notes"><?php if($isedit==0){}else{echo $brideInfo[0]->Notes;} ?></textarea></div>
+                <div><label>Pre-Session Notes</label><br><textarea name="notes"><?php if($isedit!=0){echo $brideInfo[0]->Notes;} ?></textarea></div>
               </div>
 
               <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                <div><label>Wedding Day Notes</label><br><textarea name="cbd_notes"><?php if($isedit==0){}else{echo $brideInfo[0]->cbd_notes; }?></textarea></div>
+                <div><label>Wedding Day Notes</label><br><textarea name="cbd_notes"><?php if($isedit!=0){echo $brideInfo[0]->cbd_notes; }?></textarea></div>
               </div>
 
               <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                <div><label>Private Notes</label><br><textarea name="pri_notes"><?php if($isedit==0){}else{echo $brideInfo[0]->pri_notes; }?></textarea></div>
+                <div><label>Private Notes</label><br><textarea name="pri_notes"><?php if($isedit!=0){echo $brideInfo[0]->pri_notes; }?></textarea></div>
               </div>
             </div>
           </div>
