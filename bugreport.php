@@ -1,5 +1,11 @@
 <?php
-session_start();
+ini_set('include_path', '/var/www/html/php:/var/www/html/php/ZendGdata-1.11.6:/var/www/html/PEAR:/var/www/html/contracts/lib/:/var/www/html/contracts/:/var/www/html/contracts/lib/PHPMailer/');
+date_default_timezone_set('America/Los_Angeles');
+require('gmailEmailer.php');
+
+if(!isset($_SESSION)){
+    session_start();
+}
 
 // Check that bid is what we want/safe and the user is logged in with the correct permissions
 if((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)){
@@ -9,14 +15,23 @@ if((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1
 }
 
 if(isset($_POST['submit']) && isset($_POST['report'])){
+
+  $mailer = new gmailEmailer();
+
   // the message
   // use wordwrap() if lines are longer than 70 characters
   $msg = wordwrap($_POST['report'],70);
 
   // send email
-  mail("blakecaldwell123@gmail.com","Bug Report",$msg);
-  $reportCode = urlencode("Bug Report Sent!");
-  header("Location: newbride-new.php?msg=" . $reportCode . "&color=green");
+  if($mailer->gmail("blakecaldwell123@gmail.com", '', "Bug Report", $msg)){
+      $color = "green";
+      $reportCode = urlencode("Bug Report Sent!");
+  }else{
+    $color = "red";
+    $reportCode = urlencode("Bug Report Could Not Be Sent!");
+  }
+
+  header("Location: newbride-new.php?msg=" . $reportCode . "&color=" . $color);
 }
 
 ?>
