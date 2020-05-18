@@ -31,7 +31,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 			$list = "";
 			$isString = 0;
 
-			// if is date
+			// if is date with
 			if(($timestamp = strtotime($search)) === false){
 				$isString = 1;
 			}else{
@@ -46,7 +46,7 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 
 			// if is not a date
 			if($isString === 1){
-				// changing sql statements dependent on the typed input
+				// changing sql statements dependent on the space input
 				if(stripos($search, " ") > -1){
 					// gets exactly first name and part of last name
 					$search = explode(" ", $search);
@@ -138,14 +138,37 @@ if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])
 
 				$totalOwe = $totalCost-$totalPaid;
 
+				// get lead
+				$leadId = 0;
+				$leadName = "No Lead";
+				$brideConsList = json_decode(listDayOfConsultants($bid));
+				for($i = 0; $i < count($brideConsList); $i++){
+					if($brideConsList[$i]->IsLead == '1'){
+						$leadId = $brideConsList[$i]->Consultant_ID;
+						break;
+					}
+				}
+				if($leadId != 0){
+					$consList = json_decode(listConsultants(1));
+					foreach ($consList as $consultant) {
+						if($consultant->ID == $leadId){
+							$leadName = $consultant->Consultant_Name;
+						}
+					}
+				}
+
 				// add the styled clients into variable to respond
-				$list = "<div class='card col-xs-12 col-sm-12 col-md-4 col-lg-4' id='card'><h3 id='cardName'>". $firstName . " " . $lastName ."</h3><span class='cardText' id='cardDate'>" . $eventDate . "</span><span class='cardText' id='cardTime'>" . $startTime . "-" . $doneTime . "</span><span class='cardText' id='cardPlace'>".$dayof."</span><span class='cardText' id='cardOwe'><b>Payment: </b>$". $totalPaid ."/$". $totalCost ."(Owing: $". $totalOwe .")</span><span class='cardText' id='cardPhoto'><b>Photographer: </b>".$photo_name."</span><span class='cardText' id='cardPlanner'><b>Planner: </b>".$planner_name."</span><button id='edit' onclick='edit(".$bid.")'>Edit</button><button id='pdf' onclick='pdf(".$bid.")'>Create PDF</button><button id='pdf' onclick='oldpdf(".$bid.")'>Create PDF W/ Old Terms</button></div>" . $list;
+				$list = "<div class='card col-xs-12 col-sm-12 col-md-4 col-lg-4' id='card'><h3 id='cardName'>". $firstName . " " . $lastName ."</h3><span class='cardText' id='cardDate'>" . $eventDate . "</span><span class='cardText' id='cardTime'>" . $startTime . "-" . $doneTime . "</span><span class='cardText' id='cardPlace'>".$dayof."</span><span class='cardText' id='cardOwe'><b>Payment: </b>$". $totalPaid ."/$". $totalCost ."(Owing: $". $totalOwe .")</span><span class='cardText' id='cardPhoto'><b>Photographer: </b>".$photo_name."</span><span class='cardText' id='cardLead'><b>Lead: </b>".$leadName."</span><span class='cardText' id='cardPlanner'><b>Planner: </b>".$planner_name."</span><button id='edit' onclick='edit(".$bid.")'>Edit</button><button id='pdf' onclick='pdf(".$bid.")'>Create PDF</button><button id='pdf' onclick='oldpdf(".$bid.")'>Create PDF W/ Old Terms</button></div>" . $list;
 
 				// $list .= "<li id='entry'><button id='edit' onclick='edit(".$bid.")'>Edit</button><span id='text'>".$firstName . " " . $lastName . " Event on: " . $eventDate . " " . $startTime . "-" . $doneTime . "</span></li>";//" . $eventDate . " " . $startTme . " " . $doneTime . " " . $photographer . " " . $dayof . "
 			}
 			// if no results
 			if($list == "" || $list == null || $list == " "){
-				echo "No brides found by that name";
+				if($isString == 1){
+					echo "No brides found by that name";
+				}else{
+					echo "No Brides with that date have been found!";
+				}
 			}else{
 				echo $list;
 			}
