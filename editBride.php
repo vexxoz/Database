@@ -377,11 +377,23 @@ if($isedit == 1){
                   <select name="lead">
                     <?php
                     $leadHTML = "";
+                    $leadID = 0;
+                    // get if of lead
+                    for($i = 0; $i < count($brideConsList); $i++){
+                      if(($isedit == 1) && ($brideConsList[$i]->IsLead == '1')){
+                        $leadID = $brideConsList[$i]->Consultant_ID;
+                        break;
+                      }
+                    }
                     foreach ($consList as $consultant) {
-                      if(($isedit == 1) && ($consultant->ID == $brideConsList[0]->Consultant_ID)){
-                        $leadHTML = $leadHTML . "<option selected value='".$consultant->ID."'>".$consultant->Consultant_Name."</option>";
-                      }else{
-                        $leadHTML = $leadHTML . "<option value='".$consultant->ID."'>".$consultant->Consultant_Name."</option>";
+                      // only list people who are leads
+                      if($consultant->isLead == '1'){
+                        // if bride is being edited and the id matches the id of the selected lead
+                        if(($isedit == 1) && ($consultant->ID == $leadID)){
+                          $leadHTML = $leadHTML . "<option selected value='".$consultant->ID."'>".$consultant->Consultant_Name."</option>";
+                        }else{
+                          $leadHTML = $leadHTML . "<option value='".$consultant->ID."'>".$consultant->Consultant_Name."</option>";
+                        }
                       }
                     }
 
@@ -400,8 +412,9 @@ if($isedit == 1){
                     $assistingHTML = "";
                     $print = 0;
                     foreach ($consList as $consultant) {
-                      for($i = 1; $i < count($brideConsList); $i++){
-                        if(($isedit == 1) && ($consultant->ID == $brideConsList[$i]->Consultant_ID)){
+                      for($i = 0; $i < count($brideConsList); $i++){
+                        // if bride is being edited and consultant is listed in assisting and not already listed as lead
+                        if(($isedit == 1) && ($consultant->ID == $brideConsList[$i]->Consultant_ID) && ($consultant->ID != $leadID)){
                           $print = 1;
                           break;
                         }
