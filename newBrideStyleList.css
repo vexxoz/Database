@@ -1,7 +1,5 @@
 #alert{
-	/* background-color: lightcoral; */
     text-align: center;
-    /* color: white; */
 		font-size: 25px;
 }
 #search{
@@ -28,10 +26,12 @@
 For card style
 */
 #card{
-	height: 310px;
-  -webkit-transition: background-color 1s;
-  transition: background-color 1s;
-	margin-bottom: 25px;
+	-webkit-transition: background-color 1s;
+	transition: background-color 1s;
+	margin-bottom: 0px;
+	width: 100%;
+	display: inline-block;
+	height: 56px;
 }
 #card:hover{
 	background-color: #f076a3;
@@ -40,11 +40,31 @@ For card style
 /*
 For list style
 */
+#cardName{
+  margin-left: 22px;
+  font-size: 17px;
+}
+#cardLead{
+  /* float: left; */
+}
+#cardPlace{
+  display: none;
+}
+#cardOwe{
+  display: none;
+}
+#cardPhoto{
+  display: none;
+}
 #card span{
   font-size: 13px;
+  margin-left: 1%;
 }
 #card #pdf{
   height: 30px;
+  float: right;
+  width: 100%;
+  display: none;
 }
 #entry{
 	width: 100%;
@@ -58,10 +78,10 @@ For list style
 Edit button style
 */
 #edit{
-	/*border-radius: 25px*/
-    position: absolute;
-    width: 100%;
-    left: 0;
-    margin-top: 273px;
-    font-size: 20px;
+	position: relative;
+	width: auto;
+	left: 0;
+	margin-top: -19px;
+	font-size: 20px;
+	float: right;
 }

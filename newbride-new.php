@@ -40,6 +40,11 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 		</div>
   </div>
 	<div class="row">
+		<div class="col-md-12 col-sm-12 col-lg-12" style="text-align: center;">
+			<button onclick="listView(this)">List View: Not Active</button>
+		</div>
+	</div>
+	<div class="row">
 		<button class="col-md-1 col-sm-2 col-xs-2 col-lg-1 menubar" onclick="back()">Menu</button>
 		<button class="col-md-1 col-sm-2 col-xs-2 col-lg-1 menubar offset-md-1 offset-lg-1" onclick="edit(0)">New Bride</button>
 	  <input class="col-md-5 col-sm-8 col-xs-8 col-lg-5" type="text" id="search" name="search" placeholder="Type to start search" autocomplete="off">
@@ -88,6 +93,9 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
+		var list = false;
+		var headNode;
+
     $('#search').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){
@@ -102,6 +110,15 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 			function(data,status){
 				//alert("Data: " + data + "\nStatus: " + status);
 				$("#results").html(data);
+				if(list === true){
+					for(var i=0;i<document.getElementById("results").childElementCount;i++){
+						// add classes back into elements
+						document.getElementById("results").children[i].classList.remove("col-xs-12");
+						document.getElementById("results").children[i].classList.remove("col-sm-12");
+						document.getElementById("results").children[i].classList.remove("col-md-4");
+						document.getElementById("results").children[i].classList.remove("col-lg-4");
+					}
+				}
 			});
         }
     });
@@ -117,6 +134,42 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
   }
 	function oldpdf(id){
 		window.location = 'createpdf.php?bid=' + id+'&oldTerms=1';
+	}
+
+	function listView(element){
+		headNode = document.getElementsByTagName("head");
+		if(list === true){ // remove list mode
+			listDectivate();
+			element.innerHTML = "List View: Not Active";
+		}else{ // activate list mode
+			listActivate();
+			element.innerHTML = "List View: Active";
+		}
+	}
+
+	function listDectivate(){
+		list = false;
+		headNode[0].children[headNode[0].childElementCount-1].remove(); // remove last element
+		for(var i=0;i<document.getElementById("results").childElementCount;i++){
+			// add classes back into elements
+			document.getElementById("results").children[i].classList.add("col-xs-12");
+			document.getElementById("results").children[i].classList.add("col-sm-12");
+			document.getElementById("results").children[i].classList.add("col-md-4");
+			document.getElementById("results").children[i].classList.add("col-lg-4");
+		}
+	}
+
+	function listActivate(){
+		list = true;
+		var newCode = '<link rel="stylesheet" type="text/css" href="newBrideStyleList.css">';
+		headNode[0].insertAdjacentHTML('beforeend', newCode);
+		for(var i=0;i<document.getElementById("results").childElementCount;i++){
+			// add classes back into elements
+			document.getElementById("results").children[i].classList.remove("col-xs-12");
+			document.getElementById("results").children[i].classList.remove("col-sm-12");
+			document.getElementById("results").children[i].classList.remove("col-md-4");
+			document.getElementById("results").children[i].classList.remove("col-lg-4");
+		}
 	}
 </script>
 </html>
