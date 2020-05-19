@@ -92,6 +92,21 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script type="text/javascript">
+		<?php
+
+		if(isset($_SESSION['lastSearch']) && isset($_SESSION['lastYear'])){
+
+			echo "var lastSearch = '".$_SESSION['lastSearch']."';";
+			echo "var lastYear = '".$_SESSION['lastYear']."';";
+
+			unset ($_SESSION['lastSearch']);
+			unset ($_SESSION['lastYear']);
+		}else{
+			echo "var lastSearch = '';";
+			echo "var lastYear = '';";
+		}
+
+		?>
 
 		var list = false;
 		var headNode;
@@ -99,29 +114,33 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
     $('#search').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){
-			var value = $('#search').val();
-			var inputYear = $('#year').val();
-			$.post("clientSearch.php",
-			{
-				type: 'search',
-				name: value,
-				year: inputYear
-			},
-			function(data,status){
-				//alert("Data: " + data + "\nStatus: " + status);
-				$("#results").html(data);
-				if(list === true){
-					for(var i=0;i<document.getElementById("results").childElementCount;i++){
-						// add classes back into elements
-						document.getElementById("results").children[i].classList.remove("col-xs-12");
-						document.getElementById("results").children[i].classList.remove("col-sm-12");
-						document.getElementById("results").children[i].classList.remove("col-md-4");
-						document.getElementById("results").children[i].classList.remove("col-lg-4");
-					}
-				}
-			});
+					var value = $('#search').val();
+					var inputYear = $('#year').val();
+					search(value, inputYear);
         }
     });
+
+	function search(value, inputYear){
+		$.post("clientSearch.php",
+		{
+			type: 'search',
+			name: value,
+			year: inputYear
+		},
+		function(data,status){
+			//alert("Data: " + data + "\nStatus: " + status);
+			$("#results").html(data);
+			if(list === true){
+				for(var i=0;i<document.getElementById("results").childElementCount;i++){
+					// add classes back into elements
+					document.getElementById("results").children[i].classList.remove("col-xs-12");
+					document.getElementById("results").children[i].classList.remove("col-sm-12");
+					document.getElementById("results").children[i].classList.remove("col-md-4");
+					document.getElementById("results").children[i].classList.remove("col-lg-4");
+				}
+			}
+		});
+	}
 
   function edit(id){
 	  window.location = 'editBride.php?bid=' + id;
@@ -170,6 +189,16 @@ if(isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 1)
 			document.getElementById("results").children[i].classList.remove("col-md-4");
 			document.getElementById("results").children[i].classList.remove("col-lg-4");
 		}
+	}
+
+	// if the search was saved
+	if(lastSearch != '' && lastYear != ''){
+		// put search into search bar
+		document.getElementById('search').value = lastSearch;
+		// set the date to previous search date
+		document.getElementById('year').value = lastYear;
+		// run the search
+		search(lastSearch, lastYear);
 	}
 </script>
 </html>

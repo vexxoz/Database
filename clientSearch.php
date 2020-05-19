@@ -14,12 +14,16 @@ if ((isset($_SESSION['cid']) && $_SESSION['cid'] > 0 && $_SESSION['isAdmin'] >= 
 	$mainConnection = dbConnect();
 
 if (isset($_POST['type']) && $_POST['type'] == 'search' && isset($_POST['name'])) {
-		// get search feedback
+
 
 
 		// get post variables
 		$search = $_POST['name'];
 		$year = $_POST['year'];
+
+		// save the search so if a user clicks on edit they can go back to their previous search
+		$_SESSION['lastSearch'] = $search;
+		$_SESSION['lastYear'] = $year;
 
 		// make sure request is not empty
 		if($search != "" || $search != " " || $search != null){
